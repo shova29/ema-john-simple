@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { addToDb, getStoredCart } from "../../utilities/fakedb";
 import Cart from "../Cart/Cart";
-import useCart from "../hooks/useCart";
-import useProducts from "../hooks/useProducts";
+import useCart from "../../hooks/useCart";
+import useProducts from "../../hooks/useProducts";
 import Product from "../Product/Product";
 import "./Shop.css";
 

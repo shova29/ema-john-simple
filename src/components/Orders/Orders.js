@@ -2,8 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { deleteShoppingCart, removeFromDb } from "../../utilities/fakedb";
 import Cart from "../Cart/Cart";
-import useCart from "../hooks/useCart";
-import useProducts from "../hooks/useProducts";
+import useCart from "../../hooks/useCart";
+import useProducts from "../../hooks/useProducts";
 import ReviewItem from "../ReviewItem/ReviewItem";
 import "./Orders.css";
 
@@ -38,8 +38,8 @@ const Orders = () => {
           {/*  <Link to="/inventory">
             <button>Proceed Checkout</button>
           </Link> */}
-          <button onClick={() => navigate("/inventory")}>
-            Proceed Checkout
+          <button onClick={() => navigate("/shipment")}>
+            Proceed Shipping
           </button>
           <button onClick={() => handleRemoveAllProduct()}>Clear Cart</button>
         </Cart>
