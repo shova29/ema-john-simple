@@ -10,7 +10,6 @@ import "./Shop.css";
 const Shop = () => {
   const [products, setProducts] = useProducts();
   const [cart, setCart] = useCart(products);
-  // const [cart, setCart] = useState([]);
   console.log(cart);
 
   /*  useEffect(() => {
@@ -66,6 +65,12 @@ const Shop = () => {
         <Cart cart={cart}>
           <Link to="/orders">
             <button>Review Order </button>
+            {/*  <div>
+              <button onClick={chooseOne}>Choose 1 for me</button>
+            </div>
+            <div>
+              <button onClick={chooseAgain}>Choose Again</button>
+            </div> */}
           </Link>
         </Cart>
       </div>

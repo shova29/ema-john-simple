@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { removeFromDb } from "../../utilities/fakedb";
+import { deleteShoppingCart, removeFromDb } from "../../utilities/fakedb";
 import Cart from "../Cart/Cart";
 import useCart from "../hooks/useCart";
 import useProducts from "../hooks/useProducts";
@@ -15,13 +15,13 @@ const Orders = () => {
   const handleRemoveProduct = (product) => {
     console.log(product);
     const rest = cart.filter((pd) => pd.id !== product.id);
-    setCart([rest]);
+    setCart(rest);
     removeFromDb(product.id);
   };
-  /* const handleRemoveAllProduct = (p) => {
-    const rest = cart.filter((pd) => pd.id !== p.id);
-    setCart([]);
-  }; */
+  const handleRemoveAllProduct = () => {
+    deleteShoppingCart();
+  };
+
   return (
     <div className="shop-container">
       <div className="review-item-container">
@@ -41,7 +41,7 @@ const Orders = () => {
           <button onClick={() => navigate("/inventory")}>
             Proceed Checkout
           </button>
-          {/* <button onClick={() => handleRemoveAllProduct}>Clear Cart</button> */}
+          <button onClick={() => handleRemoveAllProduct()}>Clear Cart</button>
         </Cart>
       </div>
     </div>
