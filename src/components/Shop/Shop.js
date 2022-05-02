@@ -3,49 +3,51 @@ import { Link } from "react-router-dom";
 import { addToDb, getStoredCart } from "../../utilities/fakedb";
 import Cart from "../Cart/Cart";
 import useCart from "../../hooks/useCart";
-import useProducts from "../../hooks/useProducts";
 import Product from "../Product/Product";
 import "./Shop.css";
 
 const Shop = () => {
-  const [products, setProducts] = useProducts();
-  const [cart, setCart] = useCart(products);
-  console.log(cart);
+  const [products, setProducts] = useState([]);
+  const [cart, setCart] = useCart();
+  const [pageCount, setPageCount] = useState(0);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
 
-  /*  useEffect(() => {
-    const storedCart = getStoredCart();
-    console.log(storedCart);
-    const savedCart = [];
-    for (const id in storedCart) {
-      const addedProduct = products.find((product) => product.id === id);
-      if (addedProduct) {
-        const quantity = storedCart[id];
-        addedProduct.quantity = quantity;
-        savedCart.push(addedProduct);
-      }
-      setCart(savedCart);
-      // addedProduct.quantity = storedCart[id];
-      // setCart([...cart, addedProduct]);
-    }
-  }, [products]); */
+  useEffect(() => {
+    fetch(`http://localhost:5000/product?page=${page}&size=${size}`)
+      .then((response) => response.json())
+      .then((data) => setProducts(data));
+  }, [page, size]);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/productCount")
+      .then((res) => res.json())
+      .then((data) => {
+        const count = data.count;
+        const pages = Math.ceil(count / 10);
+        setPageCount(pages);
+      });
+  }, []);
 
   const handleAddToCart = (selectedProduct) => {
     // console.log(selectedProduct);
     let newCart = [];
     const existsProduct = cart.find(
-      (product) => product.id === selectedProduct.id
+      (product) => product._id === selectedProduct._id
     );
 
     if (!existsProduct) {
       selectedProduct.quantity = 1;
       newCart = [...cart, selectedProduct];
     } else {
-      const rest = cart.filter((product) => product.id !== selectedProduct.id);
+      const rest = cart.filter(
+        (product) => product._id !== selectedProduct._id
+      );
       existsProduct.quantity = existsProduct.quantity + 1;
       newCart = [...rest, existsProduct];
     }
     setCart(newCart);
-    addToDb(selectedProduct.id);
+    addToDb(selectedProduct._id);
     // setCart([...cart, product]); //another way
   };
 
@@ -55,11 +57,29 @@ const Shop = () => {
       <div className="products-container">
         {products.map((product) => (
           <Product
-            key={product.id}
+            key={product._id}
             product={product}
             handleAddToCart={handleAddToCart}
           ></Product>
         ))}
+        <div className="pagination">
+          {[...Array(pageCount).keys()].map((number) => (
+            <button
+              className={page === number ? "selected" : ""}
+              onClick={() => setPage(number)}
+            >
+              {number + 1}
+            </button>
+          ))}
+          <select onChange={(e) => setSize(e.target.value)}>
+            <option value="5">5</option>
+            <option value="10" selected>
+              10
+            </option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select>
+        </div>
       </div>
       <div className="cart-container">
         <Cart cart={cart}>
@@ -79,84 +99,3 @@ const Shop = () => {
 };
 
 export default Shop;
-
-///////
-/*import React, { useEffect, useState } from "react";
-import Card from "../Card/Card";
-import Cart from "../Cart/Cart";
-import Header from "../Header/Header";
-import Questions from "../Questions/Questions";
-import "./Store.css";
-const Store = () => {
-  const [cards, setCards] = useState([]);
-  const [carts, setCarts] = useState([]);
-  const [cartList, setCartList] = useState([]);
-  useEffect(() => {
-    fetch("products.json")
-      .then((res) => res.json())
-      .then((data) => setCards(data));
-  }, []);
-  console.log(cartList);
-  const handleCartList = (id) => {
-    const exist = cartList.find((cart) => cart == id);
-
-    if (!exist) {
-      setCartList([...cartList, id]);
-    }
-  };
-  const chooseOne = () => {
-    if (carts.length > 0) {
-      let rand = parseInt(Math.round(Math.random() * carts.length));
-      if (rand < 0) {
-        rand = 0;
-      }
-
-      setCarts([carts[rand]]);
-      setCartList([carts[rand]?.id]);
-    }
-  };
-  const chooseAgain = () => {
-    setCartList([]);
-  };
-  useEffect(() => {
-    let tempCarts = [];
-    for (const id of cartList) {
-      const everyCart = cards.find((card) => card.id === id);
-      tempCarts = [...tempCarts, everyCart];
-    }
-    setCarts(tempCarts);
-  }, [cartList]);
-  return (
-    <div>
-      <Header></Header>
-      <main>
-        <div className="card-container">
-          {cards.length &&
-            cards.map((card) => (
-              <Card
-                key={card?.id}
-                card={card}
-                handleCartList={handleCartList}
-              ></Card>
-            ))}
-        </div>
-        <div className="cart-container">
-          <div className="cart-sticky">
-            <h1>Selected Clothes</h1>
-            {carts.length &&
-              carts.map((cart) => <Cart key={cart?.id} cart={cart}></Cart>)}
-            <div>
-              <button onClick={chooseOne}>Choose 1 for me</button>
-            </div>
-            <div>
-              <button onClick={chooseAgain}>Choose Again</button>
-            </div>
-          </div>
-        </div>
-      </main>
-      <Questions></Questions>
-    </div>
-  );
-};
-
-export default Store;*/
